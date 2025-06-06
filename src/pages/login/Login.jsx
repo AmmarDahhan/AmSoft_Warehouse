@@ -1,15 +1,83 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { IconButton } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+// import api from "../../api/axiosInstance";
 
 export default function Login({ mode, toggleTheme }) {
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const [login, setLogin] = useState("");
+  const [isManager, setIsManager] = useState(false); // نوع المستخدم
+
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      //this
+      //   const response = await api.post("/login", {
+      //   login: login,
+      //   password: password,
+      //   type: isManager ? "manager" : "warehouseKeeper",
+      //   platform: "web",
+      // });
+
+      // const result = response.data;
+      //or this
+      const response = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          login: login,
+          password: password,
+          type: isManager ? "manager" : "warehouseKeeper",
+          platform: "web",
+        }),
+      });
+
+      const result = await response.json();
+      /////
+      if (result.success) {
+        localStorage.setItem("token", result.data.access_token);
+        localStorage.setItem("role", result.data.role);
+        localStorage.setItem("user", JSON.stringify(result.data.user));
+
+        switch (result.data.role) {
+          case "manager":
+            navigate("/dashboard");
+            break;
+          case "warehouseKeeper":
+            navigate("/warehouse");
+            break;
+          case "user":
+            navigate("/data-entry");
+            break;
+          default:
+            navigate("/login");
+        }
+      } else {
+        setError("فشل تسجيل الدخول، تأكد من البيانات.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("حدث خطأ أثناء الاتصال بالخادم.");
+    }
+  };
 
   return (
     <>
-      {/* زر التبديل */}
       <IconButton
         onClick={toggleTheme}
         color="inherit"
@@ -22,12 +90,10 @@ export default function Login({ mode, toggleTheme }) {
         className="h-screen flex items-center justify-center font-sans px-4"
         style={{ backgroundColor: theme.palette.background.default }}
       >
-        {/* الصندوق الرئيسي */}
         <div
           className="flex w-[960px] h-[560px] shadow-lg rounded-[30px] overflow-hidden"
           style={{ backgroundColor: theme.palette.background.paper }}
         >
-          {/* القسم الأيسر */}
           <div className="w-[479.77px] h-[560px] bg-[#F5F6FA] relative">
             <img
               src="/assets/login/all-login.svg"
@@ -36,7 +102,6 @@ export default function Login({ mode, toggleTheme }) {
             />
           </div>
 
-          {/* القسم الأيمن */}
           <div className="w-[480px] flex flex-col items-center justify-center relative px-10">
             <div className="absolute top-6 right-6 flex items-center gap-2">
               <img src="/assets/logo.png" alt="شعار" className="w-8 h-8" />
@@ -56,23 +121,25 @@ export default function Login({ mode, toggleTheme }) {
                 تسجيل الدخول
               </h2>
 
-              <form className="space-y-5">
-                {/* البريد */}
+              <form className="space-y-5" onSubmit={handleLogin}>
+                {/* رقم الهاتف او بريد إلكتروني*/}
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="login"
                     className="block text-sm mb-2 text-right"
                     style={{ color: theme.palette.text.secondary }}
                   >
-                    البريد الإلكتروني
+                    رقم الهاتف أو البريد الإلكتروني
                   </label>
                   <div className="relative">
                     <input
-                      type="email"
-                      id="email"
-                      placeholder="أدخل الإيميل الخاص بك"
+                      type="text"
+                      id="login"
+                      placeholder="أدخل رقم الهاتف أو البريد الإلكتروني"
                       className="w-full pr-10 pl-4 py-2 rounded-[22px] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                       dir="rtl"
+                      value={login}
+                      onChange={(e) => setLogin(e.target.value)}
                       style={{
                         backgroundColor: theme.palette.background.paper,
                         border: `1px solid ${theme.palette.divider}`,
@@ -81,12 +148,11 @@ export default function Login({ mode, toggleTheme }) {
                     />
                     <img
                       src="/assets/login/icons/email.svg"
-                      alt="email"
+                      alt="login"
                       className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2"
                     />
                   </div>
                 </div>
-
                 {/* كلمة المرور */}
                 <div>
                   <label
@@ -96,24 +162,51 @@ export default function Login({ mode, toggleTheme }) {
                   >
                     كلمة المرور
                   </label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      id="password"
-                      placeholder="********"
-                      className="w-full pr-10 pl-4 py-2 rounded-[22px] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-                      dir="rtl"
-                      style={{
-                        backgroundColor: theme.palette.background.paper,
-                        border: `1px solid ${theme.palette.divider}`,
-                        color: theme.palette.text.primary,
-                      }}
-                    />
+
+                  <div
+                    className="w-full flex flex-row-reverse items-center px-3 py-2 rounded-[22px]"
+                    style={{
+                      backgroundColor: theme.palette.background.paper,
+                      border: `1px solid ${theme.palette.divider}`,
+                    }}
+                  >
                     <img
                       src="/assets/login/icons/password.svg"
                       alt="password"
-                      className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2"
+                      className="w-5 h-5 ml-2"
                     />
+
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      placeholder="********"
+                      dir="rtl"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="flex-1 bg-transparent text-sm focus:outline-none"
+                      style={{
+                        color: theme.palette.text.primary,
+                      }}
+                    />
+
+                    {/* زر الإظهار/الإخفاء */}
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      size="small"
+                      sx={{ padding: "2px" }}
+                    >
+                      {showPassword ? (
+                        <VisibilityOff
+                          fontSize="small"
+                          style={{ color: theme.palette.text.secondary }}
+                        />
+                      ) : (
+                        <Visibility
+                          fontSize="small"
+                          style={{ color: theme.palette.text.secondary }}
+                        />
+                      )}
+                    </IconButton>
                   </div>
                 </div>
 
@@ -121,7 +214,10 @@ export default function Login({ mode, toggleTheme }) {
                   className="flex justify-end text-sm"
                   style={{ color: theme.palette.text.secondary }}
                 >
-                  <a href="#" className="text-[#FF8E29] hover:underline">
+                  <a
+                    href="/reset-password"
+                    className="text-[#FF8E29] hover:underline"
+                  >
                     نسيت كلمة المرور؟
                   </a>
                 </div>
@@ -133,12 +229,37 @@ export default function Login({ mode, toggleTheme }) {
                   تسجيل الدخول
                 </button>
 
+                {error && (
+                  <p className="text-red-500 text-center text-sm">{error}</p>
+                )}
+
+                {/* رابط تبديل نوع المستخدم */}
+                <div className="text-sm text-center mt-2">
+                  {isManager ? (
+                    <button
+                      type="button"
+                      className="text-[#FF8E29] hover:underline"
+                      onClick={() => setIsManager(false)}
+                    >
+                      تسجيل الدخول كأمين مستودع
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="text-[#FF8E29] hover:underline"
+                      onClick={() => setIsManager(true)}
+                    >
+                      تسجيل الدخول كمدير
+                    </button>
+                  )}
+                </div>
+
                 <div
                   className="text-sm text-center mt-4"
                   style={{ color: theme.palette.text.secondary }}
                 >
                   لا تملك حسابًا؟{" "}
-                  <a href="#" className="text-[#FF8E29] hover:underline">
+                  <a href="/signup" className="text-[#FF8E29] hover:underline">
                     إنشاء حساب
                   </a>
                 </div>
