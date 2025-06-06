@@ -4,21 +4,21 @@ const summaryCards = [
   {
     title: "المبيعات",
     value: "٨٢,٥٠٠ ل.س",
-    icon: "/assets/icons-dashboard/sales.svg",
+    icon: "/assets/icons-dashboard/Sales.png",
     bg: "#FFFFFF",
     iconBg: "#FF8E29",
   },
   {
     title: "العملاء",
     value: "١٢٠",
-    icon: "/assets/icons-dashboard/customers.svg",
+    icon: "/assets/icons-dashboard/Customers.png",
     bg: "#FFFFFF",
     iconBg: "#0F766E",
   },
   {
     title: "متوسط الإيراد",
     value: "١١,٢٠٠ ل.س",
-    icon: "/assets/icons-dashboard/revenue.svg",
+    icon: "/assets/icons-dashboard/Avg-Revenue.png",
     bg: "#FFFFFF",
     iconBg: "#2563EB",
   },
@@ -26,7 +26,7 @@ const summaryCards = [
 
 export default function DashboardSummary() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 px-6">
+    <div className="grid grid-cols-1  lg:grid-cols-3 gap-6 mt-6 px-6">
       {summaryCards.map((card, idx) => (
         <div
           key={idx}
@@ -46,7 +46,7 @@ export default function DashboardSummary() {
             className="w-12 h-12 rounded-full flex items-center justify-center"
             style={{ backgroundColor: card.iconBg }}
           >
-            <img src={card.icon} alt={card.title} className="w-5 h-5" />
+            <img src={card.icon} alt={card.title} className="w-[70px] h-[70px]" />
           </div>
         </div>
       ))}

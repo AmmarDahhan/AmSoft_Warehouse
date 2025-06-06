@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Scrollbar Style */
+/* Scrollbar Style
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -16,6 +16,9 @@
 
 
 /* يمكن تخصيص التنسيق أكثر عند الحاجة */
-.calendar-wrapper {
+/* .calendar-wrapper {
   direction: rtl;
-}
+} */ 
+
+
+
