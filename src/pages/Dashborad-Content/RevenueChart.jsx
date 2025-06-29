@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { useTheme } from "@mui/material/styles";
 
 ChartJS.register(
   LineElement,
@@ -19,7 +20,7 @@ ChartJS.register(
   Legend
 );
 
-const data = {
+const chartData = (theme) => ({
   labels: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو"],
   datasets: [
     {
@@ -33,9 +34,9 @@ const data = {
       pointBackgroundColor: "#FF8E29",
     },
   ],
-};
+});
 
-const options = {
+const chartOptions = (theme) => ({
   responsive: true,
   plugins: {
     legend: {
@@ -46,19 +47,39 @@ const options = {
     y: {
       beginAtZero: true,
       ticks: {
+        color: theme.palette.text.primary,
         callback: (value) => `${value} ل.س`,
+      },
+      grid: {
+        color: theme.palette.divider,
+      },
+    },
+    x: {
+      ticks: {
+        color: theme.palette.text.primary,
+      },
+      grid: {
+        color: theme.palette.divider,
       },
     },
   },
-};
+});
 
 export default function RevenueChart() {
+  const theme = useTheme();
+
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 mt-6 mx-6">
-      <h2 className="text-right text-[#1E293B] font-semibold text-lg mb-4">
+    <div
+      className="rounded-2xl shadow-md p-4 mt-6 mx-6 w-[795px] h-min-[460px]"
+      style={{ backgroundColor: theme.palette.background.paper }}
+    >
+      <h2
+        className="text-right font-semibold text-lg mb-4"
+        style={{ color: theme.palette.text.primary }}
+      >
         الإيرادات خلال الأشهر
       </h2>
-      <Line data={data} options={options} />
+      <Line data={chartData(theme)} options={chartOptions(theme)} />
     </div>
   );
 }

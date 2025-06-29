@@ -79,7 +79,7 @@ export default function ResetSuccess({ mode, toggleTheme }) {
             </p>
 
             <a
-              href="#"
+              href="/"
               className="inline-block w-full py-2 rounded-xl text-white transition duration-200"
               style={{
                 backgroundColor: "#FF8E29",

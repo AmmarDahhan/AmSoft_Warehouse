@@ -12,7 +12,7 @@ export default function Login({ mode, toggleTheme }) {
   const navigate = useNavigate();
 
   const [login, setLogin] = useState("");
-  const [isManager, setIsManager] = useState(false); // نوع المستخدم
+  const [isManager, setIsManager] = useState(false); 
 
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -65,7 +65,7 @@ export default function Login({ mode, toggleTheme }) {
             navigate("/data-entry");
             break;
           default:
-            navigate("/login");
+            navigate("/");
         }
       } else {
         setError("فشل تسجيل الدخول، تأكد من البيانات.");
@@ -87,7 +87,7 @@ export default function Login({ mode, toggleTheme }) {
       </IconButton>
 
       <div
-        className="h-screen flex items-center justify-center font-sans px-4"
+        className="h-screen flex items-center justify-center font-sans px-4 pb-10 overflow-hidden"
         style={{ backgroundColor: theme.palette.background.default }}
       >
         <div

@@ -1,12 +1,22 @@
 import axios from "axios";
 
-const instance = axios.create({
-  baseURL: "http://localhost:8000/api",
+const token = localStorage.getItem("token");
+
+const api = axios.create({
+  baseURL: "http://127.0.0.1:8000/api",
   headers: {
-    "Content-Type": "application/json",
     Accept: "application/json",
+    Authorization: token ? `Bearer ${token}` : "",
   },
-  withCredentials: true,
 });
 
-export default instance;
+// لتحديث التوكن إذا تغير بعد الدخول
+api.interceptors.request.use((config) => {
+  // const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default api;

@@ -1,52 +1,67 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 
 const summaryCards = [
   {
     title: "المبيعات",
-    value: "٨٢,٥٠٠ ل.س",
+    value: "٢٣٠,٢٢٠ ل.س",
     icon: "/assets/icons-dashboard/Sales.png",
-    bg: "#FFFFFF",
     iconBg: "#FF8E29",
   },
   {
     title: "العملاء",
-    value: "١٢٠",
+    value: "٣٢٠٠",
     icon: "/assets/icons-dashboard/Customers.png",
-    bg: "#FFFFFF",
     iconBg: "#0F766E",
   },
   {
     title: "متوسط الإيراد",
-    value: "١١,٢٠٠ ل.س",
+    value: "٣٢٠٠ ل.س",
     icon: "/assets/icons-dashboard/Avg-Revenue.png",
-    bg: "#FFFFFF",
     iconBg: "#2563EB",
   },
 ];
 
 export default function DashboardSummary() {
+  const theme = useTheme();
+
   return (
-    <div className="grid grid-cols-1  lg:grid-cols-3 gap-6 mt-6 px-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {summaryCards.map((card, idx) => (
         <div
           key={idx}
-          className="flex items-center justify-between p-4 rounded-2xl"
-          style={{ backgroundColor: card.bg }}
+          className="flex items-center justify-between p-4 rounded-2xl shadow-md"
+          style={{
+            backgroundColor: theme.palette.background.paper,
+          }}
         >
           {/* النص */}
-          <div className="text-right">
-            <p className="text-sm text-[#64748B] font-medium">{card.title}</p>
-            <p className="text-lg font-bold text-[#1E293B] mt-1">
+          <div className="text-right flex-1 pr-4">
+            <p
+              className="text-sm font-medium"
+              style={{ color: theme.palette.text.secondary }}
+            >
+              {card.title}
+            </p>
+            <p
+              className="text-lg font-bold mt-1"
+              style={{ color: theme.palette.text.primary }}
+            >
               {card.value}
             </p>
+            <p className="text-xs text-orange-400 mt-2">+20% الشهر الماضي</p>
           </div>
 
           {/* الأيقونة */}
           <div
-            className="w-12 h-12 rounded-full flex items-center justify-center"
+            className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{ backgroundColor: card.iconBg }}
           >
-            <img src={card.icon} alt={card.title} className="w-[70px] h-[70px]" />
+            <img
+              src={card.icon}
+              alt={card.title}
+              className="w-16 h-16 object-contain"
+            />
           </div>
         </div>
       ))}

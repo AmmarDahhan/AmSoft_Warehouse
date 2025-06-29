@@ -407,7 +407,7 @@ export default function SignUp({ mode, toggleTheme }) {
                   style={{ color: theme.palette.text.secondary }}
                 >
                   لديك حساب؟{" "}
-                  <a href="/login" className="text-[#FF8E29] hover:underline">
+                  <a href="/" className="text-[#FF8E29] hover:underline">
                     تسجيل الدخول
                   </a>
                 </div>
