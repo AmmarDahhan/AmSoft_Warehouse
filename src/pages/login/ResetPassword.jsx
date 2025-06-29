@@ -138,7 +138,7 @@ export default function ResetPassword({ mode, toggleTheme }) {
               className="text-sm text-center mt-4"
               style={{ color: theme.palette.text.secondary }}
             >
-              <a href="/login" className="text-[#FF8E29] hover:underline">
+              <a href="/" className="text-[#FF8E29] hover:underline">
                 العودة إلى تسجيل الدخول
               </a>
             </div>

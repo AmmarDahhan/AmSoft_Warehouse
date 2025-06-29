@@ -5,6 +5,8 @@ import interactionPlugin from "@fullcalendar/interaction";
 import arLocale from "@fullcalendar/core/locales/ar";
 import MainLayout from "../MainLayout";
 import { useTheme } from "@mui/material/styles";
+import { Listbox } from "@headlessui/react";
+import "../index.css";
 
 export default function CalendarPage({ mode, toggleTheme }) {
   const calendarRef = useRef(null);
@@ -56,6 +58,13 @@ export default function CalendarPage({ mode, toggleTheme }) {
   });
   const weekdayFormatter = new Intl.DateTimeFormat("ar", { weekday: "long" });
 
+  const months = Array.from({ length: 12 }, (_, i) => ({
+    value: i,
+    name: new Intl.DateTimeFormat("ar", { month: "long" }).format(
+      new Date(2025, i)
+    ),
+  }));
+
   return (
     <MainLayout mode={mode} toggleTheme={toggleTheme} pageTitle="التقويم">
       <div
@@ -63,78 +72,110 @@ export default function CalendarPage({ mode, toggleTheme }) {
         className="p-6 min-h-screen pt-[18px] rounded-[20px]"
         style={{ backgroundColor: theme.palette.background.paper }}
       >
-        <div
-          className="rounded-[20px] shadow p-4"
-          style={{ backgroundColor: theme.palette.background.paper }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            {/* الشهر + أسهم */}
-            <div
-              className="flex items-center gap-2 text-sm font-medium"
-              style={{ color: theme.palette.text.primary }}
+        <div className="flex items-center justify-between mb-4">
+          {/* الشهر + أسهم */}
+          <div
+            className="flex items-center gap-2 text-sm font-medium"
+            style={{ color: theme.palette.text.primary }}
+          >
+            <span>{monthYearFormatter.format(currentDate)}</span>
+            <button
+              onClick={handlePrevMonth}
+              className="w-[19.17px] h-[19.17px]"
             >
-              <span>{monthYearFormatter.format(currentDate)}</span>
-              <button
-                onClick={handlePrevMonth}
-                className="w-[19.17px] h-[19.17px]"
-              >
-                <img
-                  src="/assets/icons-dashboard/right-arrow-month.png"
-                  className="w-full h-full object-cover object-bottom"
-                />
-              </button>
-              <button
-                onClick={handleNextMonth}
-                className="w-[19.17px] h-[19.17px]"
-              >
-                <img
-                  src="/assets/icons-dashboard/right-arrow-month.png"
-                  className="w-full h-full object-cover object-bottom rotate-180"
-                />
-              </button>
-            </div>
-
-            {/* اليوم السابق/التالي */}
-            <div
-              className="flex items-center gap-4 text-sm font-medium"
-              style={{ color: theme.palette.text.primary }}
+              <img
+                src="/assets/icons-dashboard/right-arrow-month.png"
+                className="w-full h-full object-cover object-bottom"
+              />
+            </button>
+            <button
+              onClick={handleNextMonth}
+              className="w-[19.17px] h-[19.17px]"
             >
-              <button onClick={handlePrevDay} className="w-[8.75px] h-[14px]">
-                <img
-                  src="/assets/icons-dashboard/right-arrow.png"
-                  className="w-full h-full object-cover object-bottom"
-                />
-              </button>
-              <div>{weekdayFormatter.format(currentDate)}</div>
-              <button onClick={handleNextDay} className="w-[8.75px] h-[14px]">
-                <img
-                  src="/assets/icons-dashboard/left-arrow.png"
-                  className="w-full h-full object-cover object-bottom"
-                />
-              </button>
-            </div>
-
-            {/* تحديد الشهر */}
-            <select
-              className="text-sm text-center rounded-[30px] px-1 w-[170px] h-[45px]"
-              style={{
-                backgroundColor: "#FF8E29",
-                color: "#FFFFFF",
-                border: "none",
-              }}
-              value={currentDate.getMonth()}
-              onChange={handleMonthChange}
-            >
-              {Array.from({ length: 12 }, (_, i) => (
-                <option key={i} value={i}>
-                  {new Intl.DateTimeFormat("ar", { month: "long" }).format(
-                    new Date(2025, i)
-                  )}
-                </option>
-              ))}
-            </select>
+              <img
+                src="/assets/icons-dashboard/right-arrow-month.png"
+                className="w-full h-full object-cover object-bottom rotate-180"
+              />
+            </button>
           </div>
 
+          {/* اليوم السابق/التالي */}
+          <div
+            className="flex items-center gap-4 text-sm font-medium"
+            style={{ color: theme.palette.text.primary }}
+          >
+            <button onClick={handlePrevDay} className="w-[8.75px] h-[14px]">
+              <img
+                src="/assets/icons-dashboard/right-arrow.png"
+                className="w-full h-full object-cover object-bottom"
+              />
+            </button>
+            <div>{weekdayFormatter.format(currentDate)}</div>
+            <button onClick={handleNextDay} className="w-[8.75px] h-[14px]">
+              <img
+                src="/assets/icons-dashboard/left-arrow.png"
+                className="w-full h-full object-cover object-bottom"
+              />
+            </button>
+          </div>
+
+          {/* تحديد الشهر */}
+          <div className="relative w-[170px] h-[45px]">
+            <Listbox
+              value={currentDate.getMonth()}
+              onChange={(selectedMonth) => {
+                const api = calendarRef.current.getApi();
+                const newDate = new Date(currentDate);
+                newDate.setMonth(selectedMonth);
+                api.gotoDate(newDate);
+                setCurrentDate(newDate);
+              }}
+            >
+              <div className="relative">
+                <Listbox.Button className="w-full h-[45px] text-sm text-center rounded-[30px] px-4 pr-8 bg-[#FF8E29] text-white border-none focus:outline-none relative scr">
+                  {months[currentDate.getMonth()].name}
+                  <span className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </span>
+                </Listbox.Button>
+                <Listbox.Options
+                  className="absolute w-full mt-0 max-h-60 overflow-auto rounded-[20px] bg-[#FF8E29] text-white shadow-lg z-10 text-center scrollbar-hide"
+                  style={{ overflowY: "auto", scrollbarWidth: "none" }}
+                >
+                  {months.map((month, idx) => (
+                    <Listbox.Option
+                      key={idx}
+                      value={month.value}
+                      className={({ active }) =>
+                        `cursor-pointer select-none py-2 ${
+                          active ? "bg-orange-300" : ""
+                        }`
+                      }
+                    >
+                      {month.name}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </div>
+            </Listbox>
+          </div>
+        </div>
+        <div
+          className="rounded-[20px] shadow p-4"
+          style={{ backgroundColor: theme.palette.background.calender }}
+        >
           {/* التقويم */}
           <FullCalendar
             ref={calendarRef}

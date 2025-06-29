@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -9,10 +9,12 @@ import ResetPassword from "./pages/login/ResetPassword.jsx";
 import ResetSuccess from "./pages/login/ResetSuccess.jsx";
 
 import Dashboard from "./pages/Dashborad-Content/Dashboard.jsx";
-import Products from "./pages/Products.jsx";
-import ProductDetailsCard from "./pages/ProductDetailsCard.jsx";
+import Products from "./pages/Product/Products.jsx";
+import ProductDetailsCard from "./pages/Product/ProductDetailsCard.jsx";
 import CalendarPage from "./pages/Calendar.jsx";
 import EntryNotes from "./pages/Notes/EntryNotes.jsx";
+import Warehouses from "./pages/Warehouses.jsx";
+import Settings from "./pages/Settings.jsx";
 
 export default function App() {
   const [mode, setMode] = useState("light");
@@ -21,6 +23,10 @@ export default function App() {
   const toggleTheme = () => {
     setMode((prev) => (prev === "light" ? "dark" : "light"));
   };
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", mode);
+  }, [mode]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -74,7 +80,15 @@ export default function App() {
           />
           <Route
             path="/entry-notes"
-            element={<EntryNotes mode={mode} toggleTheme={toggleTheme}/>}
+            element={<EntryNotes mode={mode} toggleTheme={toggleTheme} />}
+          />
+          <Route
+            path="/warehouses"
+            element={<Warehouses mode={mode} toggleTheme={toggleTheme} />}
+          />
+          <Route
+            path="/settings"
+            element={<Settings mode={mode} toggleTheme={toggleTheme} />}
           />
         </Routes>
       </Router>
